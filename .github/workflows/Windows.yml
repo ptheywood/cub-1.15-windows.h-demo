@@ -8,6 +8,7 @@ on:
       - "!.github/**"
       - ".github/scripts/install_cuda_windows.ps1"
       - ".github/workflows/Windows.yml"
+  workflow_dispatch:
 defaults:
   run:
     shell: bash
