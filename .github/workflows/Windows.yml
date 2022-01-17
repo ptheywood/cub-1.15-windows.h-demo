@@ -1,0 +1,56 @@
+name: Windows
+on:
+  push:
+    branches:
+      - '**'
+    paths:
+      - "**"
+      - "!.github/**"
+      - ".github/scripts/install_cuda_windows.ps1"
+      - ".github/workflows/Windows.yml"
+defaults:
+  run:
+    shell: bash
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      # Multiplicative build matrix
+      # optional exclude: can be partial, include: must be specific
+      matrix:
+        thrust:
+          - "1.14.0"
+          - "1.15.0"
+        os: windows-2019
+    # Define job-wide env constants
+    env:
+      # Define constants
+      CUDA: 11.6.0
+      BUILD_DIR: "build"
+      HOSTCXX: "Visual Studio 16 2019"
+      CONFIG: "Release"
+      THRUST_TAG: ${{ matrix.thrust }}
+    
+    steps:
+    # Clone the repo.
+    - uses: actions/checkout@v2
+
+    # Install minimal CUDA requirements. Does not install Thrust for CUDA >= 11.4 where it is a separate installer package. 
+    - name: Install CUDA (Windows)
+      if: ${{ runner.os == 'Windows' && env.CUDA != '' }}
+      shell: powershell
+      env:
+        cuda: ${{ env.CUDA }}
+        visual_studio: ${{ env.HOSTCXX }}
+      run: .github\scripts\install_cuda_windows.ps1
+
+    # Configure CMake. Some (older) CMake versions require -G -A for windows
+    - name: Configure cmake
+      run: >
+        cmake . -B "${{ env.BUILD_DIR }}" -G "${{ env.HOSTCXX }}" -A x64 -DTHRUST_TAG=${{ env.THRUST_TAG }}
+    
+    # Build all targets
+    - name: Build
+      working-directory: ${{ env.BUILD_DIR }}
+      run: cmake --build . --config ${{ env.CONFIG }} --target ALL_BUILD --verbose -j `nproc`
