@@ -52,7 +52,12 @@ jobs:
       run: >
         cmake . -B "${{ env.BUILD_DIR }}" -G "${{ env.HOSTCXX }}" -A x64 -DTHRUST_TAG=${{ env.THRUST_TAG }}
     
-    # Build all targets
+    # Build with Jitify after cub, which should always build.
     - name: Build
       working-directory: ${{ env.BUILD_DIR }}
-      run: cmake --build . --config ${{ env.CONFIG }} --target ALL_BUILD --verbose -j `nproc`
+      run: cmake --build . --config ${{ env.CONFIG }} --target jitify-after-cub --verbose -j `nproc`
+
+    # Build with Jitify before cub, which should error with CUB 11.5.0 (and msvc)
+    - name: Build
+      working-directory: ${{ env.BUILD_DIR }}
+      run: cmake --build . --config ${{ env.CONFIG }} --target jitify-before-cub --verbose -j `nproc`
