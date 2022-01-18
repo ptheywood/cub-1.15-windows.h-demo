@@ -5,7 +5,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake/modules/ ${CMAKE_MODULE_PA
 
 
 # Set the proejct name and laguages
-project(cub-segmented-sort-test LANGUAGES CXX CUDA)
+project(cub-windows-error LANGUAGES CXX CUDA)
 
 
 # Set a recent C++ standard supported by CUDA
@@ -61,46 +61,23 @@ endif()
 find_package(Thrust REQUIRED CONFIG)
 find_package(CUB REQUIRED CONFIG)
 
-
-# Fetch and find Jitify, it seems to be involved.
-set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/modules/ ${CMAKE_MODULE_PATH})
-include(FetchContent)
-cmake_policy(SET CMP0079 NEW)
-
-# Change the source-dir to allow inclusion via jitify/jitify.hpp rather than jitify.hpp
-FetchContent_Declare(
-    jitify
-    GIT_REPOSITORY https://github.com/NVIDIA/jitify.git
-    GIT_TAG        00232c873704f53dbdec92ad8656f2cc3b1a4067
-    SOURCE_DIR     ${FETCHCONTENT_BASE_DIR}/jitify-src/jitify
-    GIT_PROGRESS   ON
-    # UPDATE_DISCONNECTED   ON
-)
-FetchContent_GetProperties(jitify)
-if(NOT jitify_POPULATED)
-    FetchContent_Populate(jitify)
-    # Jitify is not a cmake project, so cannot use add_subdirectory, use custom find_package.
-endif()
-
-set(CMAKE_PREFIX_PATH "${CMAKE_PREFIX_PATH};${jitify_SOURCE_DIR}/..")
-# Always find the package, even if jitify is already populated.
-find_package(Jitify REQUIRED)
-
-
 ######
-# Target with jitify **before** cub, this will error
+# Target with windows.h **before** cub, this will error
 # Add the executable with its source
-add_executable(jitify-before-cub src/jitify-before-cub.cu)
+add_executable(windows-before-cub src/windows-before-cub.cu)
 
-target_link_libraries(jitify-before-cub PUBLIC CUB::CUB)
-target_link_libraries(jitify-before-cub PUBLIC Thrust::Thrust)
-target_link_libraries(jitify-before-cub PUBLIC Jitify::jitify)
+target_link_libraries(windows-before-cub PUBLIC CUB::CUB)
+target_link_libraries(windows-before-cub PUBLIC Thrust::Thrust)
 
+# Compile with NOMINMAX just to ensure it is not the cause
+target_compile_definitions(windows-before-cub PUBLIC NOMINMAX)
 
-# Target with jitify **after** cub, this will compile
+# Target with windows.h **after** cub, this will compile
 # Add the executable with its source
-add_executable(jitify-after-cub src/jitify-after-cub.cu)
+add_executable(windows-after-cub src/windows-after-cub.cu)
 
-target_link_libraries(jitify-after-cub PUBLIC CUB::CUB)
-target_link_libraries(jitify-after-cub PUBLIC Thrust::Thrust)
-target_link_libraries(jitify-after-cub PUBLIC Jitify::jitify)
+target_link_libraries(windows-after-cub PUBLIC CUB::CUB)
+target_link_libraries(windows-after-cub PUBLIC Thrust::Thrust)
+
+# Compile with NOMINMAX just to ensure it is not the cause
+target_compile_definitions(windows-after-cub PUBLIC NOMINMAX)
