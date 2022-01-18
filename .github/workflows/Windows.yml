@@ -23,12 +23,16 @@ jobs:
         thrust:
           - "1.14.0"
           - "1.15.0"
+        CUDA:
+          - 11.6.0
+          - 11.5.0
+          - 11.2.0
         os: 
           - "windows-2019"
     # Define job-wide env constants
     env:
       # Define constants
-      CUDA: 11.6.0
+      CUDA: ${{ matrix.CUDA }}
       BUILD_DIR: "build"
       HOSTCXX: "Visual Studio 16 2019"
       CONFIG: "Release"
