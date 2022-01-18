@@ -17,17 +17,18 @@ int main(int argc, char* argv[]) {
 Which when compiled will lead to compiler errors:
 
 ```bash
-_deps/thrust-src/dependencies/cub\cub/device/dispatch/dispatch_segmented_sort.cuh(338): error : invalid combi
-nation of type specifiers 
+D:/a/jitify-cub-1.15-MSVC-demo/jitify-cub-1.15-MSVC-demo/build/_deps/thrust-src/dependencies/cub\cub/device/dispatch/dispatch_segmented_sort.cuh(338): error : invalid combination of type specifiers [D:\a\jitify-cub-1.15-MSVC-demo\jitify-cub-1.15-MSVC-demo\build\jitify-before-cub.vcxproj]
+D:/a/jitify-cub-1.15-MSVC-demo/jitify-cub-1.15-MSVC-demo/build/_deps/thrust-src/dependencies/cub\cub/device/dispatch/dispatch_segmented_sort.cuh(338): error : expected an identifier [D:\a\jitify-cub-1.15-MSVC-demo\jitify-cub-1.15-MSVC-demo\build\jitify-before-cub.vcxproj]
+D:/a/jitify-cub-1.15-MSVC-demo/jitify-cub-1.15-MSVC-demo/build/_deps/thrust-src/dependencies/cub\cub/device/dispatch/dispatch_segmented_sort.cuh(379): error : expected a member name [D:\a\jitify-cub-1.15-MSVC-demo\jitify-cub-1.15-MSVC-demo\build\jitify-before-cub.vcxproj]
 ```
 
 CUB 1.14.0 does not suffer from this issue.
 
 This impacts the use of NVRTC and [NVIDIA/Jitify](https://github.com/NVIDIA/jitify), as `nvrtc.h` includes `Windows.h` if `NVRTC_GET_TYPE_NAME` is defined to a non-zero value (as used in Jitify).
 
-Including `Windows.h` *after* including `cub/cub.cuh` compiles successfully, but this order cannot always be guaranteed. 
+Including `Windows.h` *after* including `cub/cub.cuh` compiles successfully, but this order cannot always be guaranteed.
 
-See the github actions for build logs, otherwise the below instructions can be used to reproduce this behaviour.
+See the [github actions](https://github.com/ptheywood/cub-1.15-windows.h-demo/actions) for build logs (if they were recent enough), otherwise the below instructions can be used to reproduce this behaviour.
 
 ## Reproduction Instructions
 
