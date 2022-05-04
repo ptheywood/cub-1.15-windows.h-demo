@@ -1,6 +1,10 @@
 # CUB-1.15.0 and Windows.h compiler error
 
-This repository demonstrates compilation errors in CUB 1.15.0 under MSVC, when `Windows.h` is included prior to the inclusion of `cub/cub.cuh`.
+This repository demonstrated compilation errors in CUB 1.15.0 under MSVC, when `Windows.h` is included prior to the inclusion of `cub/cub.cuh`.
+
+**This has been fixed in CUB/Thrust [1.16.0](https://github.com/NVIDIA/cub/releases/tag/1.16.0) by [NVIDIA/cub#423](https://github.com/NVIDIA/cub/pull/423)**.
+
+## The Issue
 
 i.e. `src/windows-before-cub.cu`
 
